@@ -1,77 +1,99 @@
 #include <stdio.h>
 
+struct Carta {
+    int codigo;
+    char cidade[50];
+    int populacao;
+    float area;
+    float pib;
+    int pontosTuristicos;
+    float densidade;
+    float pibPerCapita;
+};
+
+void calcularDados(struct Carta *c) {
+    c->densidade = c->populacao / c->area;
+    c->pibPerCapita = c->pib / c->populacao;
+}
+
+float pegarValor(struct Carta c, int atributo) {
+    switch (atributo) {
+        case 1: return c.populacao;
+        case 2: return c.area;
+        case 3: return c.pib;
+        case 4: return c.pontosTuristicos;
+        case 5: return c.densidade;
+        case 6: return c.pibPerCapita;
+        default: return 0;
+    }
+}
+
 int main() {
-    // Carta 1
-    char estado1;
-    char codigo1[4];
-    char cidade1[50];
-    int populacao1;
-    float area1;
-    float pib1;
-    int pontos1;
+    // Carta 1 - Rio de Janeiro
+    struct Carta carta1 = {
+        1, "Rio de Janeiro", 6748000, 1182.3, 413.0, 12
+    };
+    calcularDados(&carta1);
 
-    // Carta 2
-    char estado2;
-    char codigo2[4];
-    char cidade2[50];
-    int populacao2;
-    float area2;
-    float pib2;
-    int pontos2;
+    // Carta 2 - Ceará
+    struct Carta carta2 = {
+        2, "Ceará", 9241000, 148894.4, 168.3, 9
+    };
+    calcularDados(&carta2);
 
-    // Cadastro da Carta 1
-    printf("=== Cadastro da Carta 1 ===\n");
-    printf("Estado (A-H): ");
-    scanf(" %c", &estado1);
-    printf("Código (ex: A01): ");
-    scanf("%s", codigo1);
-    printf("Nome da Cidade: ");
-    scanf(" %[^\n]", cidade1);
-    printf("População: ");
-    scanf("%d", &populacao1);
-    printf("Área (km²): ");
-    scanf("%f", &area1);
-    printf("PIB (em bilhões): ");
-    scanf("%f", &pib1);
-    printf("Número de Pontos Turísticos: ");
-    scanf("%d", &pontos1);
+    int opcao, atributo, modo;
+    int jogando = 1;
 
-    // Cadastro da Carta 2
-    printf("\n=== Cadastro da Carta 2 ===\n");
-    printf("Estado (A-H): ");
-    scanf(" %c", &estado2);
-    printf("Código (ex: A01): ");
-    scanf("%s", codigo2);
-    printf("Nome da Cidade: ");
-    scanf(" %[^\n]", cidade2);
-    printf("População: ");
-    scanf("%d", &populacao2);
-    printf("Área (km²): ");
-    scanf("%f", &area2);
-    printf("PIB (em bilhões): ");
-    scanf("%f", &pib2);
-    printf("Número de Pontos Turísticos: ");
-    scanf("%d", &pontos2);
+    while (jogando) {
+        printf("\n===== MENU =====\n");
+        printf("1 - Jogar (comparar cartas)\n");
+        printf("2 - Sair\n");
+        scanf("%d", &opcao);
 
-    // Exibindo Carta 1
-    printf("\n=== Carta 1 ===\n");
-    printf("Estado: %c\n", estado1);
-    printf("Código: %s\n", codigo1);
-    printf("Cidade: %s\n", cidade1);
-    printf("População: %d\n", populacao1);
-    printf("Área: %.2f km²\n", area1);
-    printf("PIB: %.2f bilhões\n", pib1);
-    printf("Pontos Turísticos: %d\n", pontos1);
+        switch (opcao) {
+            case 1:
+                printf("\nEscolha o modo:\n1 - Ataque (maior vence)\n2 - Defesa (menor vence)\n");
+                scanf("%d", &modo);
 
-    // Exibindo Carta 2
-    printf("\n=== Carta 2 ===\n");
-    printf("Estado: %c\n", estado2);
-    printf("Código: %s\n", codigo2);
-    printf("Cidade: %s\n", cidade2);
-    printf("População: %d\n", populacao2);
-    printf("Área: %.2f km²\n", area2);
-    printf("PIB: %.2f bilhões\n", pib2);
-    printf("Pontos Turísticos: %d\n", pontos2);
+                printf("\nEscolha o atributo para comparar:\n");
+                printf("1 - Populacao\n2 - Area\n3 - PIB\n4 - Pontos Turisticos\n5 - Densidade Populacional\n6 - PIB per capita\n");
+                scanf("%d", &atributo);
+
+                // Pegar valores
+                float v1 = pegarValor(carta1, atributo);
+                float v2 = pegarValor(carta2, atributo);
+
+                printf("\nComparacao:\n");
+                printf("Carta 1 - %s: %.2f\n", carta1.cidade, v1);
+                printf("Carta 2 - %s: %.2f\n", carta2.cidade, v2);
+
+                if (modo == 1) { // Ataque (maior vence)
+                    if (v1 > v2)
+                        printf("Resultado: Carta 1 (%s) venceu!\n", carta1.cidade);
+                    else if (v2 > v1)
+                        printf("Resultado: Carta 2 (%s) venceu!\n", carta2.cidade);
+                    else
+                        printf("Resultado: Empate!\n");
+                } else { // Defesa (menor vence)
+                    if (v1 < v2)
+                        printf("Resultado: Carta 1 (%s) venceu!\n", carta1.cidade);
+                    else if (v2 < v1)
+                        printf("Resultado: Carta 2 (%s) venceu!\n", carta2.cidade);
+                    else
+                        printf("Resultado: Empate!\n");
+                }
+                break;
+
+            case 2:
+                jogando = 0;
+                printf("Saindo do jogo...\n");
+                break;
+
+            default:
+                printf("Opcao invalida!\n");
+                break;
+        }
+    }
 
     return 0;
 }
